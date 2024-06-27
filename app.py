@@ -1,70 +1,56 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 import pandas as pd
 
 app = Flask(__name__)
 
-def clean_ra(ra_value):
-    """Função para converter RAs possivelmente em notação científica para string limpa."""
-    try:
-        return str(int(float(ra_value)))
-    except ValueError:
-        return str(ra_value)
-
-def format_number(value):
-    """Função para formatar números com duas casas decimais."""
-    try:
-        return round(float(value), 2)
-    except ValueError:
-        return value
-
-try:
-    # Carregar a planilha e garantir que RA seja tratado como string
-    df = pd.read_excel('database.xlsx', sheet_name='Planilha1', dtype=str)
-    df['RA'] = df['RA'].apply(clean_ra).str.strip()  # Limpar e converter RAs
-    print(df.head())  # Adicionado para verificar a leitura dos dados
-except Exception as e:
-    print(f"Erro ao ler o arquivo Excel: {e}")
+# Carregar o banco de dados
+df = pd.read_excel('database.xlsx')
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/search')
-def search():
-    ra = request.args.get('ra')
-    if ra:
-        try:
-            ra = clean_ra(ra).strip()
-            result = df[df['RA'] == ra]
-            if not result.empty:
-                row = result.iloc[0].to_dict()
-                print(row)  # Adicionado para verificar os dados da linha correspondente
-                data = {
-                    'success': True,
-                    'name': row.get('Nome', ''),
-                    'jogo_nota_1bim': format_number(row.get('Jogo Nota (1º Bim)', '')),
-                    'jogo_peso_40': format_number(row.get('Jogo Peso 40%', '')),
-                    'prova_nota_1bim': format_number(row.get('Prova Nota (1º Bim)', '')),
-                    'prova_peso_60': format_number(row.get('Prova Peso 60%', '')),
-                    'soma_1bim': format_number(row.get('Soma (1º Bim)', '')),
-                    'nota_b1': format_number(row.get('Nota B1', '')),
-                    'prova2_nota_2bim': format_number(row.get('Prova 2 Nota (2º Bim)', '')),
-                    'prova2_peso_70': format_number(row.get('Prova 2 Peso 70%', '')),
-                    'trabalhos_nota_2bim': format_number(row.get('Trabalhos Nota (2º Bim)', '')),
-                    'trabalhos_peso_30': format_number(row.get('Trabalhos Peso 30%', '')),
-                    'nota_b2': format_number(row.get('Nota B2', '')),
-                    'soma_final': format_number(row.get('Soma Final', '')),
-                    'media_final': format_number(row.get('Média Final', '')),
-                    'nota_final': format_number(row.get('Nota Final', '')),
-                    'atingiu_media': row.get('Atingiu Média', '')
-                }
-                return jsonify(data)
-            else:
-                return jsonify({'success': False, 'error': 'RA não encontrado'})
-        except Exception as e:
-            return jsonify({'success': False, 'error': str(e)})
+@app.route('/result', methods=['POST'])
+def result():
+    ra = request.form['ra']
+    student = df[df['RA'] == ra]
+    
+    if not student.empty:
+        nome = student.iloc[0]['Nome']
+        jogo_nota = student.iloc[0]['Nota 1º Bim Jogo Nota']
+        jogo_peso = student.iloc[0]['Nota 1º Bim Jogo Peso 40%']
+        prova_nota = student.iloc[0]['Nota 1º Bim Prova Nota']
+        prova_peso = student.iloc[0]['Nota 1º Bim Prova Peso 60%']
+        nota_b1 = student.iloc[0]['Nota B1']
+        prova2_nota = student.iloc[0]['Nota 2º Bim Prova 2 Nota']
+        prova2_peso = student.iloc[0]['Nota 2º Bim Prova 2 Peso 70%']
+        trabalhos_nota = student.iloc[0]['Nota 2º Bim Trabalhos Nota']
+        trabalhos_peso = student.iloc[0]['Nota 2º Bim Trabalhos Peso 30%']
+        nota_b2 = student.iloc[0]['Nota B2']
+        soma_final = student.iloc[0]['Soma Final']
+        media_final = student.iloc[0]['Media Final']
+        nota_final = student.iloc[0]['Nota Final']
+        atingiu_media = student.iloc[0]['Atingiu Media']
+
+        return render_template('result.html', 
+                               ra=ra, 
+                               nome=nome, 
+                               jogo_nota=jogo_nota, 
+                               jogo_peso=jogo_peso,
+                               prova_nota=prova_nota,
+                               prova_peso=prova_peso,
+                               nota_b1=nota_b1,
+                               prova2_nota=prova2_nota,
+                               prova2_peso=prova2_peso,
+                               trabalhos_nota=trabalhos_nota,
+                               trabalhos_peso=trabalhos_peso,
+                               nota_b2=nota_b2,
+                               soma_final=soma_final,
+                               media_final=media_final,
+                               nota_final=nota_final,
+                               atingiu_media=atingiu_media)
     else:
-        return jsonify({'success': False, 'error': 'Parâmetro RA ausente'})
+        return render_template('index.html', error='RA não encontrado')
 
 if __name__ == '__main__':
     app.run(debug=True)
