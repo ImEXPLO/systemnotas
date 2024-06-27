@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Consulta de Notas - GTI 1º Semestre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px #999;
+        }
+        .btn:hover {background-color: #0056b3}
+        .btn:active {
+            background-color: #0056b3;
+            box-shadow: 0 2px #666;
+            transform: translateY(2px);
+        }
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-success:active {
+            background-color: #218838;
+            box-shadow: 0 2px #666;
+            transform: translateY(2px);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .result-container .title {
+            font-weight: bold;
+        }
+        .result-container .highlight {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .result-container .spacer {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="text-center mt-4">FATEC Jahu | Processos Gerenciais | Profº Guto</h2>
+    <h3 class="text-center">Consulta de Notas - GTI 1º Semestre</h3>
+    <div class="row justify-content-center">
+        <div>
+            <form id="search-form">
+                <div class="form-group">
+                    <label for="ra">RA:</label>
+                    <input type="text" id="ra" name="ra" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Pesquisar</button>
+            </form>
+            <div id="result" class="result-container" style="display:none;">
+                <div class="title">Nome: <span id="name"></span></div>
+                <div>Jogo Nota (1º Bim): <span id="jogo_nota_1bim"></span></div>
+                <div>Jogo Peso 40%: <span id="jogo_peso_40"></span></div>
+                <div>Prova Nota (1º Bim): <span id="prova_nota_1bim"></span></div>
+                <div>Prova Peso 60%: <span id="prova_peso_60"></span></div>
+                <div>Soma (1º Bim): <span id="soma_1bim"></span></div>
+                <div class="highlight">Nota B1: <span id="nota_b1"></span></div>
+                <div class="spacer"></div>
+                <div>Prova 2 Nota (2º Bim): <span id="prova2_nota_2bim"></span></div>
+                <div>Prova 2 Peso 70%: <span id="prova2_peso_70"></span></div>
+                <div>Trabalhos Nota (2º Bim): <span id="trabalhos_nota_2bim"></span></div>
+                <div>Trabalhos Peso 30%: <span id="trabalhos_peso_30"></span></div>
+                <div class="highlight">Nota B2: <span id="nota_b2"></span></div>
+                <div class="spacer"></div>
+                <div>Soma Final: <span id="soma_final"></span></div>
+                <div>Média Final: <span id="media_final"></span></div>
+                <div class="spacer"></div>
+                <div class="highlight">Nota Final: <span id="nota_final"></span></div>
+                <div>Atingiu Média: <span id="atingiu_media"></span></div>
+            </div>
+            <button id="new-search" class="btn btn-success btn-block mt-3" style="display:none;">Nova Consulta</button>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#search-form').on('submit', function(e){
+            e.preventDefault();
+            const ra = $('#ra').val();
+            $.get('/search', {ra: ra}, function(data){
+                if(data.success) {
+                    $('#name').text(data.name);
+                    $('#jogo_nota_1bim').text(data.jogo_nota_1bim.toFixed(1));
+                    $('#jogo_peso_40').text(data.jogo_peso_40.toFixed(1));
+                    $('#prova_nota_1bim').text(data.prova_nota_1bim.toFixed(1));
+                    $('#prova_peso_60').text(data.prova_peso_60.toFixed(1));
+                    $('#soma_1bim').text(data.soma_1bim.toFixed(1));
+                    $('#nota_b1').text(data.nota_b1.toFixed(1));
+                    $('#prova2_nota_2bim').text(data.prova2_nota_2bim.toFixed(1));
+                    $('#prova2_peso_70').text(data.prova2_peso_70.toFixed(1));
+                    $('#trabalhos_nota_2bim').text(data.trabalhos_nota_2bim.toFixed(1));
+                    $('#trabalhos_peso_30').text(data.trabalhos_peso_30.toFixed(1));
+                    $('#nota_b2').text(data.nota_b2.toFixed(1));
+                    $('#soma_final').text(data.soma_final.toFixed(1));
+                    $('#media_final').text(data.media_final.toFixed(1));
+                    $('#nota_final').text(data.nota_final.toFixed(1));
+                    $('#atingiu_media').text(data.atingiu_media);
+                    $('#result').show();
+                    $('#new-search').show();
+                } else {
+                    alert(data.error);
+                }
+            });
+        });
+
+        $('#new-search').on('click', function(){
+            $('#search-form')[0].reset();
+            $('#result').hide();
+            $('#new-search').hide();
+        });
+    });
+</script>
+</body>
+</html>

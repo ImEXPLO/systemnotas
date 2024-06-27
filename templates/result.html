@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Consulta de Notas - GTI 1º Semestre</h2>
+    <h3>RA: {{ ra }}</h3>
+    <h3>Nome: {{ nome }}</h3>
+
+    <table>
+        <tr>
+            <th>1º Bimestre</th>
+            <th>Nota</th>
+            <th>Peso</th>
+        </tr>
+        <tr>
+            <td>Jogo</td>
+            <td>{{ jogo_nota }}</td>
+            <td>{{ jogo_peso }}</td>
+        </tr>
+        <tr>
+            <td>Prova</td>
+            <td>{{ prova_nota }}</td>
+            <td>{{ prova_peso }}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Nota B1</td>
+            <td>{{ nota_b1 }}</td>
+        </tr>
+        <tr>
+            <th>2º Bimestre</th>
+            <th>Nota</th>
+            <th>Peso</th>
+        </tr>
+        <tr>
+            <td>Prova 2</td>
+            <td>{{ prova2_nota }}</td>
+            <td>{{ prova2_peso }}</td>
+        </tr>
+        <tr>
+            <td>Trabalhos</td>
+            <td>{{ trabalhos_nota }}</td>
+            <td>{{ trabalhos_peso }}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Nota B2</td>
+            <td>{{ nota_b2 }}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Soma Final</td>
+            <td>{{ soma_final }}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Média Final</td>
+            <td>{{ media_final }}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Nota Final</td>
+            <td>{{ nota_final }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Atingiu Média</td>
+            <td>{{ atingiu_media }}</td>
+        </tr>
+    </table>
+    <br>
+    <form action="/" method="get">
+        <button type="submit">Nova Consulta</button>
+    </form>
+</body>
+</html>
